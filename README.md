@@ -1,5 +1,5 @@
 # Graph-based-semi-supervised-learning-for-surface-defect-recognition
-Pytorch implementation of [A new graph-based semi-supervised method for surface defect classification](https://www.sciencedirect.com/science/article/pii/S0736584520302933?dgcid=coauthor) which is an algorithm for semi-supervised learning in surface defect recognition. The referenced torch code can be found [here](https://github.com/soumith/dcgan.torch).
+Pytorch implementation of [A new graph-based semi-supervised method for surface defect classification](https://www.sciencedirect.com/science/article/pii/S0736584520302933?dgcid=coauthor) which is an algorithm for semi-supervised learning in surface defect recognition. (https://github.com/soumith/dcgan.torch).
 ### Requirements
 You will need the following to run the above:
 - Pytorch 1.0.1, Torchvision 0.4.1
