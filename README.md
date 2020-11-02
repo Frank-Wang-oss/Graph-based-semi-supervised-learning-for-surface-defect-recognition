@@ -12,7 +12,7 @@ You can access [here](http://faculty.neu.edu.cn/yunhyan/NEU_surface_defect_datab
 ### Citation
 If you find the code is useful, please cite our [paper](https://www.sciencedirect.com/science/article/pii/S0736584520302933?dgcid=coauthor)
 '''
-@{  author = {Yucheng Wang, Liang Gao, Yiping Gao, Xinyu Li},
+    @{author = {Yucheng Wang, Liang Gao, Yiping Gao, Xinyu Li},
     title = {A new graph-based semi-supervised method for surface defect classification},
     year = {2021},
     Journal = {Robotics and Computer-Integrated Manufacturing},
@@ -20,5 +20,6 @@ If you find the code is useful, please cite our [paper](https://www.sciencedirec
     Page = {102083},
     Doi = {https://doi.org/10.1016/j.rcim.2020.102083}
 '''
+
 ### Acknowledge
 -The project borrowed some code from vgsatorras's [few shot learning with GNN](https://github.com/vgsatorras/few-shot-gnn)
