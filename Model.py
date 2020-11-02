@@ -7,7 +7,13 @@ import time
 
 
 class distance_func(nn.Module):
-    ### output a similarity matrix for graph construction
+    '''
+    output a similarity matrix for graph construction
+    where
+    ratio: can be adjusted according to real applications.
+    in_dimen: the dimension of inputs
+    '''
+
     def __init__(self, args, in_dimen, ratio = [2, 2, 1, 1], dropout = False):
         super(distance_func, self).__init__()
         self.args = args
@@ -27,7 +33,10 @@ class distance_func(nn.Module):
         self.Module_list = nn.ModuleList(self.Module_list)
 
     def forward(self, input):
-        ### input size is (bs, N, feature_dimen)
+        '''
+        :param input: size is (bs, N, feature_dimen)
+        :return: size is (bs, N, N)
+        '''
         similarity = self.subtraction(input)
         for l in self.Module_list:
             similarity = l(similarity)
@@ -66,12 +75,24 @@ class GCN(nn.Module):
 
 
 
-class Adj_update(nn.Module): ### For graph construction
+class Adj_update(nn.Module):
+    '''
+    For updating of adjacent matrix
+    where
+    input_dimens: is the dimension of input
+
+    '''
     def __init__(self, args, input_dimens):
         super(Adj_update, self).__init__()
         self.distance_matrix = distance_func(args, input_dimens)
 
     def forward(self, adj_before, input):
+        '''
+        input is used to compute the current state of similarity,
+        which then is combined with previous adjacent matrix to
+        compute the adjacent matrix in current step
+
+        '''
 
         W_init = tr.eye(input.size(1)).unsqueeze(0).repeat(input.size(0), 1, 1)
         if tr.cuda.is_available:
@@ -85,6 +106,16 @@ class Adj_update(nn.Module): ### For graph construction
 
 
 class GNN(nn.Module):
+    '''
+    input: the features extracted from CNN
+    output: the label of unknown samples
+
+    att:
+      nf_gc: the dimensions of hidden layers in graph convolutional network
+      input_dimens: the dimensions of input, which are concatenation between embedding and one shot vector
+      num_layer: the number of GCN layers
+
+    '''
     def __init__(self, args):
         super(GNN, self).__init__()
         self.args = args

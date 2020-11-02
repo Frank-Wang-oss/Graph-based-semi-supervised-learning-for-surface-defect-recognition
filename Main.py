@@ -54,8 +54,16 @@ class main():
 
         self.opt_embed.zero_grad()
         self.opt_gnn.zero_grad()
+        '''
+        Extract feature vectors from Nc*Nn + 1 samples
+        
+        xi, whose size is (bs, channels, width, length), and xs, whose size is (bs, Nn*Nc, channels, width, length)
+        are input to embedding module respectively, which then output xi_embed and xs_embed.
+        
+        xi_embed is concatenated with xs_embed, which then input to GNN.
 
-        ### Extract feature vectors from Nc*Nn + 1 samples
+        '''
+
         xi, xi_label, xs, xs_label, xl_onehot = data
         xi_embed = self.embed_module(xi)
         xs_embed_ = [self.embed_module(xs[:,i,:,:,:]) for i in range(xs.size(1))]
@@ -170,12 +178,16 @@ class main():
                     self.add_count = 0
 
                     if train_accu >= self.args.eval_ratio:
+
                         ### If training accuracy > threshold, training pauses and labeling starts
+
                         if count*num<self.train_unlabeled.size(0):
                             prediction_data_set = self.train_unlabeled[count*num:(count+1)*num]
                             pre_ite = int(prediction_data_set.size(0)/self.args.batch_size)
                             extra = prediction_data_set.size(0) - pre_ite*self.args.batch_size
+
                             ### Output the results in every micrographs
+
                             for bs in range(pre_ite):
                                 mode = []
                                 prediction_data = prediction_data_set[bs*self.args.batch_size:(bs+1)*self.args.batch_size]
@@ -183,9 +195,13 @@ class main():
                                     out = self.prediction(prediction_data)
                                     out = tr.argmax(out, 1)
                                     mode.append(out)
+
                                 ### Vote the results
+
                                 mode_out = self.mode(mode,1)
+
                                 ### Adding newly labeled datasets into labeled dataset
+
                                 for j in range(out.size(0)):
                                     pre_cls = int(mode_out[j])
                                     pre_data = prediction_data[j].unsqueeze(0).cpu()

@@ -17,6 +17,7 @@ def seed_torch(seed):
 
 class data_loader():
     def __init__(self, args):
+
         self.args = args
         self.image_size = args.Image_size
         path = './NEU-CLS/'
@@ -42,6 +43,21 @@ class data_loader():
         self.test_label = self.read(path)
 
     def read(self, path):
+        '''
+
+        :param path: The path of dataset
+
+        :return:
+        train_label: A dict where key is class, values are samples
+        example:
+
+        {'Cr':[[1],[2],[3]],
+         'In':[[1],[2],[3]]
+        }
+
+        train_unlabel: size is (bs, channels, width, length), without labels
+        test: size is (bs, channels, width, length), with labels
+        '''
         dict_cls = {
             0: 'Cr',
             1: 'ln',
@@ -58,7 +74,9 @@ class data_loader():
         test_label = []
         np.random.seed(0)
         image = {}
+
         ### Read file name from directory
+
         for k,v in dict_cls.items():
             label_encoder[v] = k
         for i,class_name in enumerate(os.listdir(path)):
@@ -72,11 +90,13 @@ class data_loader():
             np.random.shuffle(name)
 
             ### Split name into train_label, train_unlabel and test dataset
+
             train_label_name = name[:self.label_e]
             train_unlabel_name = name[self.label_e:(self.label_e+self.unlabel_e)]
             test_name = name[(self.label_e+self.unlabel_e):]
 
             ### Read training samples with labels from directory
+
             for j in train_label_name:
                 img = self.image_process(path + i +'/' + j)
                 img = self.trans_label(img)
@@ -85,12 +105,14 @@ class data_loader():
             train_label[label_encoder[i]] = train
 
             ### Read training samples without labels from directory
+
             for j in train_unlabel_name:
                 img = self.image_process(path + i +'/' + j)
                 img = self.trans_unlabel(img)
                 train_unlabel.append(img)
 
             ### Read testing samples from directory
+
             for j in test_name:
                 img = self.image_process(path + i + '/' + j)
                 img = self.trans_test(img)
@@ -137,8 +159,21 @@ def trans_cuda(input):
     return input
 
 def graph_train(args, train):
-    ### For the graph construction when training
-    ### train must be a dict.
+    '''
+    For the graph construction when training
+
+    :param train: must be a dict
+
+
+    :return:
+        xi: unknown samples, whose size are (bs, channels, width, length)
+        xi_label: the label of unknown samples, which are then used to compute loss function
+        xs: samples with labels, which are used to construct a micrograph. size is
+            (bs, Nn*Nc, channels, width, length)
+        xs_labels: labels are used to propagate label information
+    '''
+
+
     Nn = args.n_shot
     Nc = args.n_way
     xi = []
@@ -188,7 +223,11 @@ def graph_train(args, train):
 
 
 def graph_prediction(args, train, prediction):
-    ### For the graph construction when predicting
+    '''
+    For the graph construction when predicting
+
+    :param prediction: size is (bs, channels, width, length), coming from unlabeled dataset or testing dataset
+    '''
     Nn = args.n_shot
     Nc = args.n_way
     xi = []
